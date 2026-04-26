@@ -59,9 +59,9 @@ Thumbs.db
 htmlcov/
 
 # Uploads (user-generated content)
-uploads/*
-!uploads/__init__.py
-!uploads/migrations/
+# uploads/*
+# !uploads/__init__.py
+# !uploads/migrations/
 
 # Virtual environments
 .venv/
