@@ -53,8 +53,8 @@ INSTALLED_APPS = [
 
     "django_extensions",
 
-    'api',
-    'uploads',
+    "api",
+    "uploads",
 ]
 
 MIDDLEWARE = [
