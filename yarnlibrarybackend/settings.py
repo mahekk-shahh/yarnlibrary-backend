@@ -33,7 +33,7 @@ SECRET_KEY = 'django-insecure-$%fe9^ja*zkqy4$h7uge3c&4pzcrubx7kop$e_w^t$6!*9ngxw
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['192.168.29.5','127.0.0.1']
+ALLOWED_HOSTS = ['*']
 
 
 # Application definition
@@ -143,8 +143,7 @@ USE_TZ = True
 STATIC_URL = 'static/'
 
 CORS_ALLOWED_ORIGINS = [
-    "http://localhost:5173",
-    "http://192.168.29.5:5173",
+    "*",
 ]
 
 AUTH_USER_MODEL = 'api.User'
