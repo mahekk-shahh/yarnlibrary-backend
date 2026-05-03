@@ -37,7 +37,6 @@ ALLOWED_HOSTS = ['*']
 
 
 # Application definition
-
 INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
@@ -50,11 +49,13 @@ INSTALLED_APPS = [
     "corsheaders",
     "django_filters",
     "storages",
+    "rest_framework_simplejwt.token_blacklist",
 
     "django_extensions",
 
     "api",
     "uploads",
+    "authentication",
 ]
 
 MIDDLEWARE = [
@@ -87,6 +88,14 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'yarnlibrarybackend.wsgi.application'
 
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': [
+        'rest_framework_simplejwt.authentication.JWTAuthentication'
+    ],
+    'DEFAULT_PERMISSION_CLASSES': [
+        'rest_framework.permissions.IsAuthenticated'
+    ]
+}
 
 # Database
 # https://docs.djangoproject.com/en/6.0/ref/settings/#databases
@@ -143,8 +152,11 @@ USE_TZ = True
 STATIC_URL = 'static/'
 
 CORS_ALLOWED_ORIGINS = [
-    "*",
+    "http://192.168.29.5:5173",
+    "http://localhost:5173",
 ]
+
+CORS_ALLOW_CREDENTIALS = True
 
 AUTH_USER_MODEL = 'api.User'
 
@@ -165,3 +177,17 @@ AWS_S3_REGION_NAME = env.str('AWS_S3_REGION_NAME')
 # AWS_S3_CUSTOM_DOMAIN = f"{AWS_STORAGE_BUCKET_NAME}.s3.amazonaws.com"
 
 # DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
+
+
+############### Email settings ###############
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.mailersend.net'
+EMAIL_PORT = 587
+EMAIL_HOST_USER = 'MS_eiliU6@yarnlibrary.in'   # literally this string
+EMAIL_HOST_PASSWORD = 'mssp.dtAmRS6.vywj2lpm16kl7oqz.1fwMeQd'
+EMAIL_USE_TLS = True
+
+DEFAULT_FROM_EMAIL = 'YarnLibrary <noreply@yarnlibrary.in>'
+
+
+FRONTEND_URL = env.str('FRONTEND_DOMAIN')

@@ -17,7 +17,7 @@ class User(AbstractUser):
     username = models.CharField(max_length=100)
     email = models.EmailField(unique=True)
     company = models.CharField(max_length=100, unique=True)
-    role = models.ForeignKey(Roles, on_delete=models.CASCADE, blank=True, default=1)
+    role = models.ForeignKey(Roles, on_delete=models.CASCADE, blank=True, default=2)
     phone_number = models.CharField(max_length=10, null=True, blank=True)
     address = models.TextField(null=True, blank=True)
     logo = models.TextField(null=True, blank=True)
@@ -26,7 +26,7 @@ class User(AbstractUser):
     REQUIRED_FIELDS = ['username', 'company']
     
     def __str__(self):
-        return self.name
+        return self.username
     
     class Meta:
         db_table = 'users'
