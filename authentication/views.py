@@ -61,8 +61,8 @@ def login(request):
             value=str(refresh),
             httponly=True,
             max_age= 7 * 24 * 60 * 60,
-            samesite='Lax',
-            secure=False
+            samesite='None',
+            secure=True
         )
 
         return response
@@ -110,7 +110,7 @@ def logout(request):
     response.delete_cookie(
         key='refresh_token',
         path='/',
-        samesite='Lax',
+        samesite='None',
     )
     
     return response
