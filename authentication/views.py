@@ -135,13 +135,13 @@ class ResetPasswordTokenView(viewsets.ModelViewSet):
             reset_link = f'{frontend_domain}/reset-password/{raw_token}'
 
             html_content = render_to_string("email/reset_password.html", context={'reset_link':reset_link, 'frontend_domain':frontend_domain})
-            email = EmailMultiAlternatives(
+            email_msg = EmailMultiAlternatives(
                 subject="Reset Password",
-                to=["mahek240305@gmail.com"],
+                to=[email],
             )
-            email.attach_alternative(html_content, "text/html")
+            email_msg.attach_alternative(html_content, "text/html")
 
-            email.send()
+            email_msg.send()
 
         return Response(
             {
