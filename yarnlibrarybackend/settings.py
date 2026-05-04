@@ -185,8 +185,8 @@ AWS_S3_REGION_NAME = env.str('AWS_S3_REGION_NAME')
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = 'smtp.mailersend.net'
 EMAIL_PORT = 587
-EMAIL_HOST_USER = 'MS_eiliU6@yarnlibrary.in'   # literally this string
-EMAIL_HOST_PASSWORD = 'mssp.dtAmRS6.vywj2lpm16kl7oqz.1fwMeQd'
+EMAIL_HOST_USER = env.str('EMAIL_HOST_USER')   # literally this string
+EMAIL_HOST_PASSWORD = env.str('EMAIL_HOST_PASSWORD')
 EMAIL_USE_TLS = True
 
 DEFAULT_FROM_EMAIL = 'YarnLibrary <noreply@yarnlibrary.in>'
