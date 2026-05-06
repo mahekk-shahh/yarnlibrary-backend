@@ -13,13 +13,24 @@ https://docs.djangoproject.com/en/6.0/ref/settings/
 import os
 from pathlib import Path
 import environ
+import os
+import ssl
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 LOCAL='.env'
 env = environ.Env()
 environ.Env.read_env(os.path.join(BASE_DIR, LOCAL))
 
+CELERY_BROKER_URL = os.environ.get("REDIS_URL")
+CELERY_RESULT_BACKEND = os.environ.get("REDIS_URL")
 
+CELERY_BROKER_USE_SSL = {
+    "ssl_cert_reqs": ssl.CERT_NONE
+}
+
+CELERY_REDIS_BACKEND_USE_SSL = {
+    "ssl_cert_reqs": ssl.CERT_NONE
+}
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
