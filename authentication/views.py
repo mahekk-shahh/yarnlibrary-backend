@@ -141,14 +141,18 @@ class ResetPasswordTokenView(viewsets.ModelViewSet):
             )
             email_msg.attach_alternative(html_content, "text/html")
 
-            email_msg.send()
+            try:
+                email_msg.send()
+                return Response(
+                    {
+                        "message": "A password reset link has been sent. Kindly check your inbox and spam folder. If the email is not received, please verify the email address and try again."
+                    },
+                    status=status.HTTP_200_OK
+                )
+            except e:
+                print("Error Sending mail: ", e)
+                return Response({'message':"Error sending mail"}, status=status.HTTP_400_BAD_REQUEST)
 
-        return Response(
-            {
-                "message": "A password reset link has been sent. Kindly check your inbox and spam folder. If the email is not received, please verify the email address and try again."
-            },
-            status=status.HTTP_200_OK
-        )
 
 class NewPasswordView(viewsets.ModelViewSet):
     serializer_class = NewPasswordSerializer
