@@ -149,7 +149,7 @@ class ResetPasswordTokenView(viewsets.ModelViewSet):
                     },
                     status=status.HTTP_200_OK
                 )
-            except e:
+            except Exception as e:
                 print("Error Sending mail: ", e)
                 return Response({'message':"Error sending mail"}, status=status.HTTP_400_BAD_REQUEST)
 
