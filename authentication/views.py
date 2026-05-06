@@ -10,8 +10,9 @@ from django.conf import settings
 
 from .serializer import LoginSerializer, ResetPasswordTokenSerializer, NewPasswordSerializer
 from .models import ResetPasswordToken
-from .utils import generate_reset_token
+from .utils import generate_reset_token, send_email
 from api.models import User
+import threading
 
 
 # Create your views here.
@@ -141,17 +142,14 @@ class ResetPasswordTokenView(viewsets.ModelViewSet):
             )
             email_msg.attach_alternative(html_content, "text/html")
 
-            try:
-                email_msg.send()
-                return Response(
-                    {
-                        "message": "A password reset link has been sent. Kindly check your inbox and spam folder. If the email is not received, please verify the email address and try again."
-                    },
-                    status=status.HTTP_200_OK
-                )
-            except Exception as e:
-                print("Error Sending mail: ", e)
-                return Response({'message':"Error sending mail"}, status=status.HTTP_400_BAD_REQUEST)
+            threading.Thread(target=send_email,args=(email_msg,)).start()
+            
+        return Response(
+            {
+                "message": "A password reset link has been sent. Kindly check your inbox and spam folder. If the email is not received, please verify the email address and try again."
+            },
+            status=status.HTTP_200_OK
+        )
 
 
 class NewPasswordView(viewsets.ModelViewSet):

@@ -6,3 +6,10 @@ def generate_reset_token():
     hashed_token = hashlib.sha256(raw_token.encode()).hexdigest()
 
     return raw_token, hashed_token
+
+
+def send_email(email):
+    try:
+        email.send()
+    except Exception as e:
+        print("Error Sending mail: ", e)
