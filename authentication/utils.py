@@ -12,6 +12,7 @@ def generate_reset_token():
 
 def send_email(email):
     try:
+        print("sending email...")
         email.send()
     except Exception as e:
         print("Error Sending mail: ", e)
