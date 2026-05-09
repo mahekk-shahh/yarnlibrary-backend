@@ -143,7 +143,7 @@ class ResetPasswordTokenView(viewsets.ModelViewSet):
             )
             email_msg.attach_alternative(html_content, "text/html")
 
-            threading.Thread(target=send_email,args=(email_msg,)).start()
+            threading.Thread(target=send_email,args=(email_msg,), daemon=True).start()
 
             # send_email_task.delay("Reset Password", html_content, email)
             
