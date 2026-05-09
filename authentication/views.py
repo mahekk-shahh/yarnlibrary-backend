@@ -134,7 +134,7 @@ class ResetPasswordTokenView(viewsets.ModelViewSet):
             raw_token, hashed_token = generate_reset_token()
             ResetPasswordToken.objects.create(user=user, token=hashed_token)
             frontend_domain = settings.FRONTEND_URL
-            reset_link = f'{frontend_domain}/reset-password/{raw_token}'
+            reset_link = f'{frontend_domain}/auth/reset-password/{raw_token}'
 
             html_content = render_to_string("email/reset_password.html", context={'reset_link':reset_link, 'frontend_domain':frontend_domain})
             email_msg = EmailMultiAlternatives(
