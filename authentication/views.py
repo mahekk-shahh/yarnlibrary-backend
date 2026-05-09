@@ -14,6 +14,7 @@ from .serializer import LoginSerializer, ResetPasswordTokenSerializer, NewPasswo
 from .models import ResetPasswordToken
 from .utils import generate_reset_token, send_email, send_email, send_email_task
 from api.models import User
+from api.serializer import UserSerializer
 
 
 # Create your views here.
@@ -63,8 +64,8 @@ def login(request):
             value=str(refresh),
             httponly=True,
             max_age= 7 * 24 * 60 * 60,
-            samesite='None',
-            secure=True
+            samesite='Lax',
+            # secure=True
         )
 
         return response
@@ -80,21 +81,25 @@ def get_access_token(request):
         return Response({
             'message': 'No token found',
             'access': None,
-            'is_authenticated': False
+            'is_authenticated': False,
+            'user': None
         }, status=status.HTTP_401_UNAUTHORIZED)
 
     try:
         access = RefreshToken(refresh_token)
+        user = User.objects.get(id=access['user_id'])
 
         return Response({
             'access': str(access.access_token),
-            'is_authenticated': True
+            'is_authenticated': True,
+            'user': UserSerializer(user).data
         })
     except Exception:
         return Response({
             'message': 'Invalid token',
             'access': None,
             'is_authenticated': False,
+            'user': None
         }, status=status.HTTP_401_UNAUTHORIZED)
 
 @api_view(['POST'])
