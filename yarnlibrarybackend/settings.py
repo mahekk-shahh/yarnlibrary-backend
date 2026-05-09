@@ -167,6 +167,7 @@ CORS_ALLOWED_ORIGINS = [
     "http://localhost:5173",
     env.str('FRONTEND_DOMAIN'),
     "https://www.yarnlibrary.in"
+    "https://admin-yarnlibrary.onrender.com"
 ]
 
 CORS_ALLOW_CREDENTIALS = True
