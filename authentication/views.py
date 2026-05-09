@@ -64,8 +64,8 @@ def login(request):
             value=str(refresh),
             httponly=True,
             max_age= 7 * 24 * 60 * 60,
-            samesite='Lax',
-            # secure=True
+            samesite='None',
+            secure=True
         )
 
         return response
@@ -118,6 +118,7 @@ def logout(request):
         key='refresh_token',
         path='/',
         samesite='None',
+        secure=True
     )
     
     return response
