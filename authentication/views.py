@@ -1,3 +1,5 @@
+import threading
+
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework.response import Response
@@ -10,7 +12,7 @@ from django.conf import settings
 
 from .serializer import LoginSerializer, ResetPasswordTokenSerializer, NewPasswordSerializer
 from .models import ResetPasswordToken
-from .utils import generate_reset_token, send_email_task
+from .utils import generate_reset_token, send_email, send_email, send_email_task
 from api.models import User
 
 
@@ -135,13 +137,15 @@ class ResetPasswordTokenView(viewsets.ModelViewSet):
             reset_link = f'{frontend_domain}/reset-password/{raw_token}'
 
             html_content = render_to_string("email/reset_password.html", context={'reset_link':reset_link, 'frontend_domain':frontend_domain})
-            # email_msg = EmailMultiAlternatives(
-            #     subject="Reset Password",
-            #     to=[email],
-            # )
-            # email_msg.attach_alternative(html_content, "text/html")
+            email_msg = EmailMultiAlternatives(
+                subject="Reset Password",
+                to=[email],
+            )
+            email_msg.attach_alternative(html_content, "text/html")
 
-            send_email_task.delay("Reset Password", html_content, email)
+            threading.Thread(target=send_email,args=(email_msg,)).start()
+
+            # send_email_task.delay("Reset Password", html_content, email)
             
         return Response(
             {

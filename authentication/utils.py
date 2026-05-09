@@ -10,6 +10,11 @@ def generate_reset_token():
     return raw_token, hashed_token
 
 
+def send_email(email):
+    try:
+        email.send()
+    except Exception as e:
+        print("Error Sending mail: ", e)
 
 @shared_task(bind=True, max_retries=3)
 def send_email_task(self, subject, html_content, to_email):
