@@ -4,17 +4,17 @@ from rest_framework.response import Response
 from .serializer import ContactSerializer, UserSerializer, NewsSerializer, ExhibitionSerializer, ProductSerializer
 from .models import Contact, User, Roles, News, Exhibition, Product
 from django_filters.rest_framework import DjangoFilterBackend
-from rest_framework.permissions import IsAuthenticated
 from rest_framework.permissions import AllowAny
+from .permissions import IsAdminRole
 
 class UsersViewSet(viewsets.ModelViewSet):
     serializer_class = UserSerializer
-    queryset = User.objects.all()
+    queryset = User.objects.all().order_by('id')
     filter_backends = [DjangoFilterBackend]
     filterset_fields = ['role']
     permission_classes = [AllowAny]
 
-    @action(detail=False, methods=['post'])
+    @action(detail=False, methods=['post'], permission_classes=[IsAdminRole])
     def supplier(self, request):
         role = Roles.objects.get(name='Supplier')
         serializer = self.get_serializer(data=request.data)
@@ -32,10 +32,28 @@ class NewsViewSet(viewsets.ModelViewSet):
     serializer_class = NewsSerializer
     queryset = News.objects.all()
 
+    def get_permissions(self):
+        if(self.action in ['create', 'update', 'partial_update', 'destroy']):
+            return [IsAdminRole()]
+        else:
+            return [AllowAny()]
+
 class ExhibitionViewSet(viewsets.ModelViewSet):
     serializer_class = ExhibitionSerializer
     queryset = Exhibition.objects.all()
+    
+    def get_permissions(self):
+        if(self.action in ['create', 'update', 'partial_update', 'destroy']):
+            return [IsAdminRole()]
+        else:
+            return [AllowAny()]
 
 class ProductViewSet(viewsets.ModelViewSet):
     serializer_class = ProductSerializer
     queryset = Product.objects.all()
+    
+    def get_permissions(self):
+        if(self.action in ['create', 'update', 'partial_update', 'destroy']):
+            return [IsAdminRole()]
+        else:
+            return [AllowAny()]

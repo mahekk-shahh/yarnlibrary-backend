@@ -164,6 +164,7 @@ STATIC_URL = 'static/'
 
 CORS_ALLOWED_ORIGINS = [
     "http://192.168.29.5:5173",
+    "http://192.168.29.5:5174",
     "http://localhost:5173",
     env.str('FRONTEND_DOMAIN'),
     "https://www.yarnlibrary.in",

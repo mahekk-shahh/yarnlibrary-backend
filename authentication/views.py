@@ -64,8 +64,67 @@ def login(request):
             value=str(refresh),
             httponly=True,
             max_age= 7 * 24 * 60 * 60,
-            samesite='None',
-            secure=True
+            samesite='Lax',
+            # secure=True
+        )
+
+        return response
+    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+@api_view(['POST'])
+@permission_classes([AllowAny])
+def admin_login(request):
+    """
+    Login endpoint that authenticates a user and returns a token.
+    
+    Expected request data:
+    {
+        "email": "user@example.com",
+        "password": "password"
+    }
+    
+    Returns:
+    {
+        "token": "<auth_token>",
+        "user": {
+            "id": 1,
+            "username": "username",
+            "email": "user@example.com",
+            "company": "Company Name",
+            "phone_number": "1234567890",
+            "address": "Address",
+            "logo": "logo_url",
+            "role": 1,
+            "role_name": "Supplier",
+            "is_active": true,
+            "logo_url": "full_url_to_logo"
+        }
+    }
+    """
+    serializer = LoginSerializer(data=request.data)
+    if serializer.is_valid():
+        user = serializer.validated_data['user']
+        
+        if user.role_id != 1:
+            return Response({
+                'access': None,
+                'user': None,
+                'message': 'Only admins can login.'
+            }, status=status.HTTP_403_FORBIDDEN)
+        
+        refresh = RefreshToken.for_user(user)
+
+        response = Response({
+            'access': str(refresh.access_token),
+            'user': str(user)
+        }, status=status.HTTP_200_OK)
+
+        response.set_cookie(
+            key='refresh_token',
+            value=str(refresh),
+            httponly=True,
+            max_age= 7 * 24 * 60 * 60,
         )
 
         return response
@@ -117,8 +176,6 @@ def logout(request):
     response.delete_cookie(
         key='refresh_token',
         path='/',
-        samesite='None',
-        secure=True
     )
     
     return response
