@@ -119,13 +119,15 @@ def admin_login(request):
             'access': str(refresh.access_token),
             'user': str(user)
         }, status=status.HTTP_200_OK)
+        print('debug', settings.DEBUG)
 
         response.set_cookie(
             key='refresh_token',
             value=str(refresh),
             httponly=True,
             max_age= 7 * 24 * 60 * 60,
-            secure=True
+            secure=not settings.DEBUG,
+            samesite='Lax' if settings.DEBUG else 'None', 
         )
 
         return response
@@ -177,6 +179,7 @@ def logout(request):
     response.delete_cookie(
         key='refresh_token',
         path='/',
+        samesite='Lax' if settings.DEBUG else 'None', 
     )
     
     return response
