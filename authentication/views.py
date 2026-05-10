@@ -125,6 +125,7 @@ def admin_login(request):
             value=str(refresh),
             httponly=True,
             max_age= 7 * 24 * 60 * 60,
+            secure=True
         )
 
         return response
