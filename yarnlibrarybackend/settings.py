@@ -14,23 +14,12 @@ import os
 from pathlib import Path
 import environ
 import os
-import ssl
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 LOCAL='.env'
 env = environ.Env()
 environ.Env.read_env(os.path.join(BASE_DIR, LOCAL))
 
-CELERY_BROKER_URL = os.environ.get("REDIS_URL")
-CELERY_RESULT_BACKEND = os.environ.get("REDIS_URL")
-
-CELERY_BROKER_USE_SSL = {
-    "ssl_cert_reqs": ssl.CERT_NONE
-}
-
-CELERY_REDIS_BACKEND_USE_SSL = {
-    "ssl_cert_reqs": ssl.CERT_NONE
-}
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -195,9 +184,9 @@ AWS_S3_REGION_NAME = env.str('AWS_S3_REGION_NAME')
 
 
 ############### Email settings ###############
-EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-EMAIL_HOST = 'smtp.mailersend.net'
-EMAIL_PORT = 2525
+EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
+EMAIL_HOST = "smtp-relay.brevo.com"
+EMAIL_PORT = 587
 EMAIL_HOST_USER = env.str('EMAIL_HOST_USER')
 EMAIL_HOST_PASSWORD = env.str('EMAIL_HOST_PASSWORD')
 EMAIL_USE_TLS = True
@@ -205,7 +194,6 @@ EMAIL_USE_SSL = False
 
 EMAIL_TIMEOUT = 30
 
-DEFAULT_FROM_EMAIL = 'YarnLibrary <noreply@yarnlibrary.in>'
-
+DEFAULT_FROM_EMAIL = env.str('DEFAULT_FROM_EMAIL')
 
 FRONTEND_URL = env.str('FRONTEND_DOMAIN')

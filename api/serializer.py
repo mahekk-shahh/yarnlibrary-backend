@@ -7,14 +7,18 @@ class UserSerializer(serializers.ModelSerializer):
     # email = serializers.EmailField(unique=True)
     role_name = serializers.CharField(source='role.name', read_only=True)
     logo_url = serializers.SerializerMethodField()
+    confirm_password = serializers.CharField(write_only=True)
+    password = serializers.CharField(write_only=True)
     class Meta:
         model = User
-        fields = ["id", "username", "email", "company", "phone_number", "address", "logo", "role", "role_name", "is_active", "logo_url"]
+        fields = ["id", "username", "email", "company", "phone_number", "address", "logo", "role", "role_name", "is_active", "logo_url", "confirm_password", "password"]
 
     def create(self, validated_data):
-        self.password = "pass@123"
+        validated_data.pop("confirm_password")
+        self.password = validated_data.get('password')
         user = User.objects.create(**validated_data)
         user.set_password(self.password)
+        user.is_active = False
         user.save()
 
         return user
@@ -24,6 +28,16 @@ class UserSerializer(serializers.ModelSerializer):
             return get_file_url(obj.logo)
         return None
     
+    def validate(self, data):
+        print(data)
+        if data['password'] != data['confirm_password']:
+            raise serializers.ValidationError("Passwords do not match")
+        return data
+    
+    def activate(self, user):
+        user.is_active = True
+        user.save()
+
 class ContactSerializer(serializers.ModelSerializer):
     class Meta:
         fields = '__all__'

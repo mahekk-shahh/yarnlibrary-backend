@@ -7,7 +7,6 @@ def generate_presigned_url(file_name, file_type):
     try:
         response = s3.generate_presigned_url('put_object', Params={'Bucket': settings.AWS_STORAGE_BUCKET_NAME, 'Key': file_name, 'ContentType': file_type}, ExpiresIn=3600)
     except Exception as error:
-        print('errorrrrrrr', error)
         return None
 
     return response

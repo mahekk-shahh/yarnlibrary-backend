@@ -12,7 +12,7 @@ from django.conf import settings
 
 from .serializer import LoginSerializer, ResetPasswordTokenSerializer, NewPasswordSerializer
 from .models import ResetPasswordToken
-from .utils import generate_reset_token, send_email, send_email, send_email_task
+from .utils import generate_reset_token, send_email, send_email
 from api.models import User
 from api.serializer import UserSerializer
 
@@ -64,13 +64,28 @@ def login(request):
             value=str(refresh),
             httponly=True,
             max_age= 7 * 24 * 60 * 60,
-            samesite='Lax',
-            # secure=True
+            secure=not settings.DEBUG,
+            samesite='Lax' if settings.DEBUG else 'None',
         )
 
         return response
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
+@api_view(['PATCH'])
+@permission_classes([AllowAny])
+def activate_user(request, user_id):
+    user = User.objects.filter(id=user_id).first()
+
+    if not user:
+        return Response({"message": "User not found"}, status=status.HTTP_404_NOT_FOUND)
+    
+    if user.is_active:
+        return Response({"message": "User is already active"}, status=status.HTTP_400_BAD_REQUEST)
+    
+    user.is_active = True
+    user.save()
+
+    return Response({"message": "User activated successfully"}, status=status.HTTP_200_OK)
 
 @api_view(['POST'])
 @permission_classes([AllowAny])
@@ -119,7 +134,6 @@ def admin_login(request):
             'access': str(refresh.access_token),
             'user': str(user)
         }, status=status.HTTP_200_OK)
-        print('debug', settings.DEBUG)
 
         response.set_cookie(
             key='refresh_token',
@@ -203,6 +217,9 @@ class ResetPasswordTokenView(viewsets.ModelViewSet):
             frontend_domain = settings.FRONTEND_URL
             reset_link = f'{frontend_domain}/auth/reset-password/{raw_token}'
 
+            print(settings.EMAIL_HOST_USER)
+            print(settings.EMAIL_HOST_PASSWORD)
+
             html_content = render_to_string("email/reset_password.html", context={'reset_link':reset_link, 'frontend_domain':frontend_domain})
             email_msg = EmailMultiAlternatives(
                 subject="Reset Password",
@@ -210,7 +227,7 @@ class ResetPasswordTokenView(viewsets.ModelViewSet):
             )
             email_msg.attach_alternative(html_content, "text/html")
 
-            print("email id:", email)
+            print("sending email to:", email)
             threading.Thread(target=send_email,args=(email_msg,), daemon=True).start()
 
             # send_email_task.delay("Reset Password", html_content, email)
